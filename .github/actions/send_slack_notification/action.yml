@@ -20,20 +20,28 @@ runs:
   steps:
   - name: Send Slack Notification on Success
     if: inputs.status == 'success'
+    env:
+      SLACK_WEBHOOK_URL: ${{ inputs.SLACK_WEBHOOK_URL }}
+      RELEASE_TYPE: ${{ inputs.release_type }}
+      VERSION: ${{ inputs.version }}
     run: |-
         curl -X POST -H 'Content-type: application/json' \
-        --data '{
-        "text": "'"${{ inputs.release_type }}"' Release succeeded for deriv-static-content with version *'"${{ inputs.version }}"'*"
-        }' \
-          ${{ inputs.SLACK_WEBHOOK_URL }}
+        --data "{
+        \"text\": \"${RELEASE_TYPE} Release succeeded for deriv-static-content with version *${VERSION}*\"
+        }" \
+          "${SLACK_WEBHOOK_URL}"
     shell: bash
-  
+
   - name: Send Slack Notification on Failure
     if: inputs.status == 'failure'
+    env:
+      SLACK_WEBHOOK_URL: ${{ inputs.SLACK_WEBHOOK_URL }}
+      RELEASE_TYPE: ${{ inputs.release_type }}
+      VERSION: ${{ inputs.version }}
     run: |-
           curl -X POST -H 'Content-type: application/json' \
-          --data '{
-            "text": "'"${{ inputs.release_type }}"' Release failed for deriv-static-content with version *'"${{ inputs.version }}"'*"
-          }' \
-          ${{ inputs.SLACK_WEBHOOK_URL }}
+          --data "{
+            \"text\": \"${RELEASE_TYPE} Release failed for deriv-static-content with version *${VERSION}*\"
+          }" \
+          "${SLACK_WEBHOOK_URL}"
     shell: bash
